@@ -26,8 +26,17 @@ jobs:
       - name: Fetch zb
         run: curl -fL -o zb.jar https://github.com/AdamBien/zb/releases/latest/download/zb.jar
 
+      - name: Fetch zunit
+        run: |
+          curl -fL -o zunit https://raw.githubusercontent.com/AdamBien/zunit/main/zunit
+          chmod +x zunit
+          echo "$PWD" >> "$GITHUB_PATH"
+
       - name: Build
         run: java -jar zb.jar
+
+      - name: Test
+        run: zunit
 
       - name: Create Release
         env:
