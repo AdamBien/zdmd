@@ -1,0 +1,25 @@
+#!/usr/bin/env -S java --source 25
+
+import module java.net.http;
+
+String name = MethodHandles.lookup().lookupClass().getName();
+String version = "2026-07-12.1";
+String downloadUrl = "https://github.com/AdamBien/zdmd/releases/latest/download/zdmd.jar";
+
+void main(String... args) throws Exception {
+    IO.println(name + " " + version);
+    var destination = Path.of("zbo", "zdmd.jar");
+    Files.createDirectories(destination.getParent());
+    var staging = destination.resolveSibling(destination.getFileName() + ".part");
+    try (var http = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build()) {
+        var request = HttpRequest.newBuilder(URI.create(downloadUrl)).build();
+        var response = http.send(request, HttpResponse.BodyHandlers.ofFile(staging));
+        if (response.statusCode() != 200) {
+            Files.deleteIfExists(staging);
+            System.err.println("download failed with HTTP %d: %s".formatted(response.statusCode(), downloadUrl));
+            System.exit(1);
+        }
+    }
+    Files.move(staging, destination, StandardCopyOption.ATOMIC_MOVE);
+    IO.println("installed %s (%d bytes)".formatted(destination, Files.size(destination)));
+}
