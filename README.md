@@ -61,7 +61,7 @@ Java 25+, [zb](https://github.com/AdamBien/zb)
 
 ```
 zb
-java -jar zbo/app.jar
+java -jar zbo/zdmd.jar
 ```
 
 Tests run automatically as the zb post-build hook ([zunit](https://airails.dev)).

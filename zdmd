@@ -1,0 +1,7 @@
+#!/usr/bin/env -S java --source 25 -cp ./zbo/zdmd.jar
+
+import airhacks.App;
+
+void main(String... args) {
+    System.exit(App.run(args));
+}
