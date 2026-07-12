@@ -30,6 +30,7 @@ void main() throws Exception {
     writesConventionalFiles(report);
     overwritesExistingFile(report);
     failsNamingUnwritableFile(report);
+    writesAllFormats(report);
 }
 
 // covers exporting R1.1, exporting R1.2, exporting R1.3
@@ -85,6 +86,17 @@ void overwritesExistingFile(airhacks.zdmd.linting.entity.LintReport report) thro
     var css = Exporter.export(report.designSystem(), "css-vars", null);
     var cssFile = Exporter.writeTokens(css, "css-vars", directory);
     assert Files.readString(cssFile).equals(css) : "existing tokens.css overwritten";
+}
+
+// covers exporting R5.1
+void writesAllFormats(airhacks.zdmd.linting.entity.LintReport report) throws Exception {
+    var directory = Files.createTempDirectory("zdmd-export-all");
+    var written = Exporter.writeAllTokens(report.designSystem(), directory);
+    var names = written.stream().map(path -> path.getFileName().toString()).toList();
+    assert names.equals(java.util.List.of("tokens.css", "tokens.json")) : "every supported format written, got " + names;
+    for (var file : written) {
+        assert Files.size(file) > 0 : "written file has content: " + file;
+    }
 }
 
 // covers exporting R4.3

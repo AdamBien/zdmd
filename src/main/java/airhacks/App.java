@@ -31,16 +31,19 @@ public interface App {
     }
 
     static int run(String... args) {
-        if (args.length == 0 || args[0].equals("help") || args[0].equals("--help") || args[0].equals("-h")) {
+        if (args.length > 0 && (args[0].equals("help") || args[0].equals("--help") || args[0].equals("-h"))) {
             IO.println(usage());
             return 0;
         }
-        if (args[0].equals("--version") || args[0].equals("-v")) {
+        if (args.length > 0 && (args[0].equals("--version") || args[0].equals("-v"))) {
             IO.println(VERSION);
             return 0;
         }
         var arguments = Arguments.parse(args);
         try {
+            if (args.length == 0) {
+                return convertAll();
+            }
             return switch (args[0]) {
                 case "lint" -> lint(arguments);
                 case "diff" -> diff(arguments);
@@ -65,12 +68,21 @@ public interface App {
                 zdmd %s — lint, diff, and export DESIGN.md design tokens
 
                 Usage:
+                  zdmd                    convert DESIGN.md into all formats and write tokens.css, tokens.json
                   zdmd lint <file> [--format json|md]
                   zdmd diff <before> <after> [--format json|md]
                   zdmd export <file> --format <css-vars|dtcg> [--prefix <prefix>]
 
                 Pass "-" as a file to read from stdin.
                 """.formatted(VERSION).strip();
+    }
+
+    static int convertAll() {
+        var report = Linter.lint(readInput("DESIGN.md"));
+        var written = Exporter.writeAllTokens(report.designSystem(), Path.of(""));
+        written.forEach(IO::println);
+        // like `export`, the bare launch exits 0 regardless of lint findings
+        return 0;
     }
 
     static int lint(Arguments arguments) {

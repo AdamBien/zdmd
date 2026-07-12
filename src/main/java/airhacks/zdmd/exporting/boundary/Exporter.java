@@ -31,6 +31,12 @@ public interface Exporter {
         };
     }
 
+    static List<Path> writeAllTokens(DesignSystem state, Path directory) {
+        return FORMATS.stream()
+                .map(format -> writeTokens(export(state, format, null), format, directory))
+                .toList();
+    }
+
     static Path writeTokens(String serialized, String format, Path directory) {
         var fileName = switch (format) {
             case "css-vars" -> "tokens.css";

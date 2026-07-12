@@ -1,5 +1,7 @@
 import airhacks.App;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -39,9 +41,33 @@ void main() throws Exception {
 
         // covers S1.5
         assert Files.exists(Path.of("tokens.css")) : "successful export also writes tokens.css to the working directory";
+
+        // covers S2.2
+        assert !Files.exists(Path.of("DESIGN.md")) : "precondition: working directory must not contain DESIGN.md";
+        var missing = App.run();
+        assert missing == 2 : "bare launch without DESIGN.md exits 2, got " + missing;
+
+        // covers S2.1, S2.3
+        Files.copy(broken, Path.of("DESIGN.md"));
+        var stdout = new ByteArrayOutputStream();
+        var original = System.out;
+        System.setOut(new PrintStream(stdout));
+        int bare;
+        try {
+            bare = App.run();
+        } finally {
+            System.setOut(original);
+        }
+        assert bare == 0 : "bare launch exits 0 regardless of lint findings, got " + bare;
+        assert Files.exists(Path.of("tokens.css")) && Files.exists(Path.of("tokens.json"))
+                : "bare launch writes every supported format";
+        var printed = stdout.toString();
+        assert printed.contains("tokens.css") && printed.contains("tokens.json")
+                : "bare launch prints each written filename, got: " + printed;
     } finally {
         Files.deleteIfExists(clean);
         Files.deleteIfExists(broken);
+        Files.deleteIfExists(Path.of("DESIGN.md"));
         Files.deleteIfExists(Path.of("tokens.css"));
         Files.deleteIfExists(Path.of("tokens.json"));
     }

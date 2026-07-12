@@ -21,6 +21,9 @@
 /// - S1.3 If lint finds errors or diff finds a regression, then the system shall exit 1.
 /// - S1.4 When an export succeeds, the system shall exit 0 regardless of lint findings in the source. _(why: findings are `lint`'s concern; exports must stay scriptable)_
 /// - S1.5 When an export succeeds, the system shall also write the serialized output to its conventional file in the working directory. _(why: agents want files without shell redirection; stdout stays intact for pipes)_
+/// - S2.1 When launched without arguments, the system shall convert `DESIGN.md` from the working directory into every supported format, write each to its conventional file, and print each written filename to stdout. _(why: zero-ceremony default — the common case needs no flags)_
+/// - S2.2 If launched without arguments and `DESIGN.md` cannot be read, then the system shall write a friendly error to stderr and exit 2.
+/// - S2.3 When launched without arguments, the system shall write the exports and exit 0 regardless of lint findings in `DESIGN.md`.
 ///
 /// ## Ubiquitous language
 ///
