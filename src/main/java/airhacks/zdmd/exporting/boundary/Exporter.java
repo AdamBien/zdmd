@@ -5,6 +5,10 @@ import airhacks.zdmd.exporting.control.Dtcg;
 import airhacks.zdmd.reporting.boundary.Json;
 import airhacks.zdmd.tokens.entity.DesignSystem;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -25,5 +29,20 @@ public interface Exporter {
             case "dtcg" -> Json.pretty(Dtcg.tokenFile(state));
             default -> throw new IllegalArgumentException("Unsupported format: " + format);
         };
+    }
+
+    static Path writeTokens(String serialized, String format, Path directory) {
+        var fileName = switch (format) {
+            case "css-vars" -> "tokens.css";
+            case "dtcg" -> "tokens.json";
+            default -> throw new IllegalArgumentException("Unsupported format: " + format);
+        };
+        var file = directory.resolve(fileName);
+        try {
+            return Files.writeString(file, serialized);
+        } catch (IOException error) {
+            throw new UncheckedIOException(
+                    "\"%s\" could not be written: %s".formatted(file, error.getMessage()), error);
+        }
     }
 }

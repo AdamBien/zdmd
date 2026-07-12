@@ -1,6 +1,7 @@
 import airhacks.App;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 void main() throws Exception {
     var clean = Files.createTempFile("design-clean", ".md");
@@ -35,8 +36,13 @@ void main() throws Exception {
         // covers S1.4
         var export = App.run("export", broken.toString(), "--format", "css-vars");
         assert export == 0 : "successful export exits 0 despite lint findings, got " + export;
+
+        // covers S1.5
+        assert Files.exists(Path.of("tokens.css")) : "successful export also writes tokens.css to the working directory";
     } finally {
         Files.deleteIfExists(clean);
         Files.deleteIfExists(broken);
+        Files.deleteIfExists(Path.of("tokens.css"));
+        Files.deleteIfExists(Path.of("tokens.json"));
     }
 }

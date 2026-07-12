@@ -107,7 +107,9 @@ public interface App {
         }
         var file = arguments.positional(0, "export requires a file argument");
         var report = Linter.lint(readInput(file));
-        IO.println(Exporter.export(report.designSystem(), format, arguments.flag("prefix")));
+        var output = Exporter.export(report.designSystem(), format, arguments.flag("prefix"));
+        IO.println(output);
+        Exporter.writeTokens(output, format, Path.of(""));
         // a successful export exits 0 even if the source has lint findings;
         // those are surfaced by `lint`, not by the export itself
         return 0;

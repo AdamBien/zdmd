@@ -1,7 +1,10 @@
 import airhacks.zdmd.exporting.boundary.Exporter;
 import airhacks.zdmd.linting.boundary.Linter;
 
-void main() {
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+
+void main() throws Exception {
     var report = Linter.lint("""
             ```yaml
             name: Demo
@@ -24,6 +27,9 @@ void main() {
     cssVars(report);
     dtcg(report);
     formats();
+    writesConventionalFiles(report);
+    overwritesExistingFile(report);
+    failsNamingUnwritableFile(report);
 }
 
 // covers exporting R1.1, exporting R1.2, exporting R1.3
@@ -57,4 +63,39 @@ void formats() {
     assert Exporter.supports("css-vars") : "css-vars supported";
     assert Exporter.supports("dtcg") : "dtcg supported";
     assert !Exporter.supports("tailwind") : "tailwind deliberately unsupported";
+}
+
+// covers exporting R4.1
+void writesConventionalFiles(airhacks.zdmd.linting.entity.LintReport report) throws Exception {
+    var directory = Files.createTempDirectory("zdmd-export");
+    var css = Exporter.export(report.designSystem(), "css-vars", null);
+    var cssFile = Exporter.writeTokens(css, "css-vars", directory);
+    assert cssFile.getFileName().toString().equals("tokens.css") : "css-vars lands in tokens.css, got " + cssFile;
+    assert Files.readString(cssFile).equals(css) : "tokens.css content equals serialized export";
+    var json = Exporter.export(report.designSystem(), "dtcg", null);
+    var jsonFile = Exporter.writeTokens(json, "dtcg", directory);
+    assert jsonFile.getFileName().toString().equals("tokens.json") : "dtcg lands in tokens.json, got " + jsonFile;
+    assert Files.readString(jsonFile).equals(json) : "tokens.json content equals serialized export";
+}
+
+// covers exporting R4.2
+void overwritesExistingFile(airhacks.zdmd.linting.entity.LintReport report) throws Exception {
+    var directory = Files.createTempDirectory("zdmd-export-overwrite");
+    Files.writeString(directory.resolve("tokens.css"), "stale content");
+    var css = Exporter.export(report.designSystem(), "css-vars", null);
+    var cssFile = Exporter.writeTokens(css, "css-vars", directory);
+    assert Files.readString(cssFile).equals(css) : "existing tokens.css overwritten";
+}
+
+// covers exporting R4.3
+void failsNamingUnwritableFile(airhacks.zdmd.linting.entity.LintReport report) throws Exception {
+    var directory = Files.createTempDirectory("zdmd-export-blocked");
+    Files.createDirectories(directory.resolve("tokens.css"));
+    var css = Exporter.export(report.designSystem(), "css-vars", null);
+    try {
+        Exporter.writeTokens(css, "css-vars", directory);
+        assert false : "writing over a directory must fail";
+    } catch (UncheckedIOException expected) {
+        assert expected.getMessage().contains("tokens.css") : "failure names the file: " + expected.getMessage();
+    }
 }

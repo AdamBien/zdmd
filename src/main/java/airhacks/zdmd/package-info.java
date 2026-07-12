@@ -20,6 +20,7 @@
 /// - S1.2 If input cannot be read, then the system shall write a friendly error to stderr and exit 2.
 /// - S1.3 If lint finds errors or diff finds a regression, then the system shall exit 1.
 /// - S1.4 When an export succeeds, the system shall exit 0 regardless of lint findings in the source. _(why: findings are `lint`'s concern; exports must stay scriptable)_
+/// - S1.5 When an export succeeds, the system shall also write the serialized output to its conventional file in the working directory. _(why: agents want files without shell redirection; stdout stays intact for pipes)_
 ///
 /// ## Ubiquitous language
 ///
