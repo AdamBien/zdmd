@@ -53,11 +53,25 @@ zdmd export <file> --format <css-vars|dtcg> [--prefix <prefix>]
 
 The built-in parser covers what DESIGN.md token files use: nested block mappings and sequences, quoted and plain scalars, flow collections on a single line, literal/folded block scalars, and comments. Anchors, aliases, tags, and multi-document streams are rejected with a recoverable lint warning.
 
+## Installation
+
+No build tooling or `git clone` required — only Java 25+:
+
+```
+curl -fLO https://raw.githubusercontent.com/AdamBien/zdmd/main/zdinstall
+chmod +x zdinstall
+./zdinstall
+```
+
+`zdinstall` downloads the latest released `zdmd.jar` into `zbo/`. Run it again anytime to update.
+
 ## Prerequisites
 
-Java 25+, [zb](https://github.com/AdamBien/zb)
+Java 25+, [zb](https://github.com/AdamBien/zb) (build from source only)
 
 ## Build & run
+
+For contributors:
 
 ```
 zb
