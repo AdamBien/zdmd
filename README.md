@@ -39,15 +39,19 @@ flowchart LR
 ## Conventions
 
 - reads a DESIGN.md file argument or stdin (`-`), writes results to stdout, errors to stderr
-- exit codes: `lint` 1 on errors, `diff` 1 on regression, 2 on unreadable input, 0 otherwise; a successful `export` exits 0 regardless of lint findings
+- `export` also writes its output to the conventional file in the working directory: `tokens.css` (css-vars), `tokens.json` (dtcg)
+- exit codes: `lint` 1 on errors, `diff` 1 on regression, 2 on unreadable input, 0 otherwise; a successful `export` (and the bare launch) exits 0 regardless of lint findings
 
 ## Usage
 
 ```
+zdmd                    # convert DESIGN.md into all formats, write tokens.css + tokens.json
 zdmd lint <file> [--format json|md]
 zdmd diff <before> <after> [--format json|md]
 zdmd export <file> --format <css-vars|dtcg> [--prefix <prefix>]
 ```
+
+The bare launch reads `DESIGN.md` from the current directory, writes every supported format, and prints the written filenames — the zero-flag default for agents.
 
 ## YAML subset
 
@@ -78,7 +82,11 @@ zb
 java -jar zbo/zdmd.jar
 ```
 
-Tests run automatically as the zb post-build hook ([zunit](https://airails.dev)).
+Tests run automatically as the zb post-build hook ([zunit](https://github.com/AdamBien/zunit)). The repo-root `zdmd` launcher script runs the current build from the project directory: `./zdmd lint DESIGN.md`.
+
+## Release
+
+Every push to `main` builds, tests, and publishes `zdmd.jar` as a GitHub Release tagged `v<version>.<run_number>` ([release.yml](.github/workflows/release.yml)). The version comes from [`src/main/resources/version.txt`](src/main/resources/version.txt); zunit gates the release — a red suite publishes nothing.
 
 ## [/sbce](https://sbce.space) Quickstart
 
