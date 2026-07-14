@@ -2,7 +2,7 @@
 
 ## About
 
-A zero-dependency Java 25 CLI application, built and packaged with [zb](https://github.com/AdamBien/zb). Cloned from the [bce.design](https://bce.design) / [airails.dev](https://airails.dev) `java-cli-app` template.
+A Java port of the TypeScript [DESIGN.md CLI](https://github.com/google-labs-code/design.md): a zero-dependency Java 25 CLI application, built and packaged with [zb](https://github.com/AdamBien/zb). Cloned from the [bce.design](https://bce.design) / [airails.dev](https://airails.dev) `java-cli-app` template.
 
 **Why it exists:** zdmd lints, diffs, and exports [DESIGN.md](https://github.com/google-labs-code/design.md) design-token files without a JavaScript toolchain — a single executable JAR replaces node_modules for agents and developers working with design systems on the JVM. Only web-standard export formats are supported (CSS custom properties, W3C DTCG); Tailwind is intentionally out of scope.
 
