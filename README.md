@@ -6,6 +6,8 @@ A Java port of the TypeScript [DESIGN.md CLI](https://github.com/google-labs-cod
 
 **Why it exists:** zdmd lints, diffs, and exports [DESIGN.md](https://github.com/google-labs-code/design.md) design-token files without a JavaScript toolchain — a single executable JAR replaces node_modules for agents and developers working with design systems on the JVM. Only web-standard export formats are supported (CSS custom properties, W3C DTCG); Tailwind is intentionally out of scope.
 
+zdmd slots into the [airails.dev](https://airails.dev) web skills workflow: zdmd verifies a DESIGN.md and exports `tokens.css`, and `/web-conventions` — composed by `/web-static` and `/web-components` — consumes the DESIGN.md tokens when generating HTML/CSS.
+
 <!-- sbce:generated:start -->
 **Charter**: zdmd lints, diffs, and exports DESIGN.md design tokens as a zero-dependency Java CLI.
 
@@ -101,3 +103,5 @@ Example — a "time in business hubs" TZ utility:
 ```
 
 Bare `/sbce new` (no argument) bootstraps from the `## About` prose above — it is the inception seed a PM/BA can fill in.
+
+powered by [airhacks.industries](https://airhacks.industries)
