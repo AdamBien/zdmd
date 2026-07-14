@@ -1,0 +1,6 @@
+classes.dir=<temp.dir>
+jar.dir=zbo/
+jar.file.name=zdmd.jar
+resources.dir=<discovered by zb>
+sources.dir=<discovered by zb>
+post.build.hook=zunit
